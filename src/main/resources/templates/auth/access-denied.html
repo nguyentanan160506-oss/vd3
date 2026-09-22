@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Từ chối truy cập (403)</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="panel" style="text-align: center; padding: 60px 20px;">
+        <h1 style="color: #dc2626; font-size: 64px; margin-bottom: 10px;">403</h1>
+        <h2 style="color: #172033; font-size: 24px; margin-bottom: 16px;">Bạn không có quyền truy cập trang này!</h2>
+        <p style="color: #64748b; max-width: 500px; margin: 0 auto 30px;">
+            Khu vực này yêu cầu quyền quản trị viên (ROLE_ADMIN) hoặc bạn chưa được cấp quyền phù hợp.
+        </p>
+        <div>
+            <a th:href="@{/}" class="btn primary">&larr; Trở về Trang chủ</a>
+            <a th:href="@{/products}" class="btn secondary" style="margin-left: 10px;">Xem sản phẩm</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

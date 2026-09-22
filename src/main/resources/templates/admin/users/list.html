@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Quản lý Người dùng</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1>Danh sách Người dùng</h1>
+        <span style="color: #64748b; font-size: 14px;">Tổng cộng: <strong th:text="${totalElements}">0</strong> tài khoản</span>
+    </div>
+
+    <!-- THÔNG BÁO FLASH -->
+    <div class="alert success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <!-- TÌM KIẾM -->
+    <div class="panel" style="padding: 16px 20px;">
+        <form th:action="@{/users}" method="get" class="search" style="margin: 0;">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm theo username, họ tên hoặc email...">
+            <button type="submit" class="btn primary">Tìm kiếm</button>
+            <a th:href="@{/users}" class="btn secondary" th:if="${keyword != null and !keyword.isEmpty()}">Làm mới</a>
+        </form>
+    </div>
+
+    <!-- BẢNG USER -->
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Avatar</th>
+                <th>Username</th>
+                <th>Họ và tên</th>
+                <th>Email</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th>Sản phẩm</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users.content}">
+                <td>
+                    <img th:src="${u.images != null and !#strings.isEmpty(u.images) ? u.images : '/images/avatar-default.png'}"
+                         class="thumb" style="width: 44px; height: 44px; border-radius: 50%;"
+                         onerror="this.src='/images/avatar-default.png'">
+                </td>
+                <td style="font-weight: 600;" th:text="${u.username}">username</td>
+                <td th:text="${u.fullName}">Nguyễn Văn A</td>
+                <td th:text="${u.email}">email@domain.com</td>
+                <td>
+                    <span class="badge" th:classappend="${u.roleName == 'ROLE_ADMIN' or u.roleName == 'ADMIN' ? 'badge-danger' : 'badge-info'}"
+                          th:text="${u.roleName}">ROLE_USER</span>
+                </td>
+                <td>
+                    <span class="badge" th:classappend="${u.enabled ? 'badge-success' : 'badge-danger'}"
+                          th:text="${u.enabled ? 'Đang hoạt động' : 'Đã khóa'}">Hoạt động</span>
+                </td>
+                <td th:text="${u.productCount}">0</td>
+                <td>
+                    <div class="actions">
+                        <a th:href="@{/users/edit/{id}(id=${u.id})}" class="btn secondary small">Sửa</a>
+
+                        <!-- Toggle Status -->
+                        <form th:action="@{/users/{id}/toggle-status(id=${u.id})}" method="post" style="display:inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn small"
+                                    th:classappend="${u.enabled ? 'danger' : 'success-btn'}"
+                                    th:text="${u.enabled ? 'Khóa' : 'Kích hoạt'}"
+                                    onclick="return confirm('Bạn có chắc muốn đổi trạng thái tài khoản này?');">
+                            </button>
+                        </form>
+
+                        <!-- Delete -->
+                        <form th:action="@{/users/{id}/delete(id=${u.id})}" method="post" style="display:inline;"
+                              th:if="${u.roleName != 'ROLE_ADMIN' and u.roleName != 'ADMIN'}">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn danger small"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này?');">
+                                Xóa
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${users.content == null or users.content.isEmpty()}">
+                <td colspan="8" style="text-align: center; color: #64748b; padding: 30px;">
+                    Không tìm thấy người dùng nào phù hợp.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PHÂN TRANG -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/users(keyword=${keyword}, page=${currentPage - 1})}">&laquo; Trước</a>
+
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${i == currentPage ? 'active' : ''}">
+            <a th:if="${i != currentPage}"
+               th:href="@{/users(keyword=${keyword}, page=${i})}" th:text="${i + 1}">1</a>
+            <span th:if="${i == currentPage}" th:text="${i + 1}">1</span>
+        </span>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/users(keyword=${keyword}, page=${currentPage + 1})}">Sau &raquo;</a>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Trang chủ</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="panel" style="text-align: center; padding: 40px 20px;">
+        <h1 style="color: #1d4ed8; font-size: 32px; margin-bottom: 12px;">Chào mừng bạn đến với IOTSTAR SHOP</h1>
+        <p style="font-size: 16px; color: #64748b; max-width: 600px; margin: 0 auto 24px;">
+            Hệ thống quản lý bán hàng và phân quyền tài khoản chuyên nghiệp sử dụng Spring Boot 4, Spring Security, JPA SQL Server và Cloudinary.
+        </p>
+
+        <div sec:authorize="isAuthenticated()">
+            <div class="alert success" style="display: inline-block;">
+                Xin chào <strong th:text="${#authentication.principal.fullName}">User</strong>! Bạn đang đăng nhập với vai trò <span class="badge badge-info" th:text="${#authentication.principal.role}">USER</span>
+            </div>
+            <div style="margin-top: 20px;">
+                <a th:href="@{/products}" class="btn primary">Xem danh sách sản phẩm</a>
+                <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')" class="btn secondary" style="margin-left: 10px;">Vào trang Dashboard Quản trị</a>
+            </div>
+        </div>
+
+        <div sec:authorize="!isAuthenticated()" style="margin-top: 24px;">
+            <a th:href="@{/login}" class="btn primary" style="margin-right: 10px;">Đăng nhập ngay</a>
+            <a th:href="@{/register}" class="btn secondary">Đăng ký tài khoản</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

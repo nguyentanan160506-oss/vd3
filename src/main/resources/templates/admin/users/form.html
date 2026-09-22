@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Chỉnh sửa Người dùng</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1>Chỉnh sửa Thông tin Người dùng</h1>
+        <a th:href="@{/users}" class="btn secondary small">&larr; Danh sách người dùng</a>
+    </div>
+
+    <div class="panel narrow" style="margin: 0 auto;">
+        <div class="alert error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+        <form th:action="@{/users/edit/{id}(id=${userDTO.id})}" th:object="${userDTO}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-grid">
+                <label>Username</label>
+                <input type="text" th:field="*{username}" readonly style="background-color: #f1f5f9; cursor: not-allowed;">
+
+                <label>Email</label>
+                <input type="email" th:field="*{email}" readonly style="background-color: #f1f5f9; cursor: not-allowed;">
+
+                <label for="fullName">Họ và tên *</label>
+                <div>
+                    <input type="text" id="fullName" th:field="*{fullName}" required>
+                    <span class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></span>
+                </div>
+
+                <label for="roleId">Vai trò (Role) *</label>
+                <div>
+                    <select id="roleId" th:field="*{roleId}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                        <option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.name}"
+                                th:selected="${r.id == userDTO.roleId}">USER</option>
+                    </select>
+                </div>
+
+                <label>Avatar hiện tại</label>
+                <div>
+                    <img th:src="${userDTO.images != null and !#strings.isEmpty(userDTO.images) ? userDTO.images : '/images/avatar-default.png'}"
+                         class="thumb" style="width: 70px; height: 70px; border-radius: 50%;"
+                         onerror="this.src='/images/avatar-default.png'">
+                </div>
+
+                <label for="avatarFile">Cập nhật Avatar</label>
+                <div>
+                    <input type="file" id="avatarFile" th:field="*{avatarFile}" accept="image/*">
+                    <span class="hint" style="color: #64748b; font-size: 12px;">Ảnh sẽ được upload tự động lên Cloudinary</span>
+                </div>
+
+                <div></div>
+                <div style="margin-top: 10px;">
+                    <button type="submit" class="btn primary">Lưu thay đổi</button>
+                    <a th:href="@{/users}" class="btn secondary" style="margin-left: 8px;">Hủy bỏ</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

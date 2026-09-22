@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Bảng điều khiển Quản trị</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1>Dashboard Thống kê Hệ thống</h1>
+        <div>
+            <a th:href="@{/users}" class="btn primary small">Quản lý User</a>
+            <a th:href="@{/products/create}" class="btn success-btn small" style="margin-left: 8px;">+ Thêm sản phẩm</a>
+        </div>
+    </div>
+
+    <!-- CARDS THỐNG KÊ -->
+    <div class="cards" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="card">
+            <b>TỔNG SỐ NGƯỜI DÙNG</b>
+            <strong th:text="${totalUsers}">0</strong>
+            <span style="color: #64748b; font-size: 13px;">Tài khoản đăng ký trên hệ thống</span>
+        </div>
+        <div class="card">
+            <b>TỔNG SỐ SẢN PHẨM</b>
+            <strong th:text="${totalProducts}" style="color: #059669;">0</strong>
+            <span style="color: #64748b; font-size: 13px;">Sản phẩm đang được quản lý</span>
+        </div>
+    </div>
+
+    <!-- BẢNG USER MỚI NHẤT -->
+    <div class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h2 style="font-size: 18px; margin: 0; color: #0f172a;">Người dùng mới đăng ký</h2>
+            <a th:href="@{/users}" style="color: #2563eb; text-decoration: none; font-size: 14px; font-weight: 500;">Xem tất cả &rarr;</a>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>Username</th>
+                    <th>Họ và tên</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                    <th>Trạng thái</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${recentUsers}">
+                    <td>
+                        <img th:src="${u.images != null and !#strings.isEmpty(u.images) ? u.images : '/images/avatar-default.png'}"
+                             class="thumb" style="width: 40px; height: 40px; border-radius: 50%;"
+                             onerror="this.src='/images/avatar-default.png'">
+                    </td>
+                    <td style="font-weight: 600;" th:text="${u.username}">admin</td>
+                    <td th:text="${u.fullName}">System Administrator</td>
+                    <td th:text="${u.email}">admin@gmail.com</td>
+                    <td>
+                        <span class="badge" th:classappend="${u.roleName == 'ROLE_ADMIN' or u.roleName == 'ADMIN' ? 'badge-danger' : 'badge-info'}"
+                              th:text="${u.roleName}">ROLE_ADMIN</span>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${u.enabled ? 'badge-success' : 'badge-danger'}"
+                              th:text="${u.enabled ? 'Kích hoạt' : 'Chưa kích hoạt'}">Kích hoạt</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- BẢNG SẢN PHẨM MỚI NHẤT -->
+    <div class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h2 style="font-size: 18px; margin: 0; color: #0f172a;">Sản phẩm mới cập nhật</h2>
+            <a th:href="@{/products}" style="color: #2563eb; text-decoration: none; font-size: 14px; font-weight: 500;">Xem tất cả &rarr;</a>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Người tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${recentProducts}">
+                    <td>
+                        <img th:if="${p.images != null and !p.images.isEmpty()}"
+                             th:src="${p.images[0].imageUrl}" class="thumb"
+                             onerror="this.src='/images/default-image.png'">
+                        <img th:unless="${p.images != null and !p.images.isEmpty()}"
+                             src="/images/default-image.png" class="thumb">
+                    </td>
+                    <td style="font-weight: 600;" th:text="${p.name}">Sản phẩm</td>
+                    <td style="color: #dc2626; font-weight: 600;" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}">0 VNĐ</td>
+                    <td th:text="${p.quantity}">0</td>
+                    <td th:text="${p.userFullName != null ? p.userFullName : 'Hệ thống'}">System</td>
+                    <td>
+                        <a th:href="@{/products/detail/{id}(id=${p.id})}" class="btn secondary small">Chi tiết</a>
+                    </td>
+                </tr>
+                <tr th:if="${recentProducts == null or recentProducts.isEmpty()}">
+                    <td colspan="6" style="text-align: center; color: #64748b; padding: 24px;">Chưa có sản phẩm nào.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

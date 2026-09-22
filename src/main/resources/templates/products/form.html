@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title th:text="${productDTO.id != null ? 'Chỉnh sửa Sản phẩm' : 'Thêm mới Sản phẩm'}">Sản phẩm</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1 th:text="${productDTO.id != null ? 'Chỉnh sửa Sản phẩm: ' + productDTO.name : 'Thêm mới Sản phẩm'}">Thêm sản phẩm</h1>
+        <a th:href="@{/products}" class="btn secondary small">&larr; Danh sách sản phẩm</a>
+    </div>
+
+    <div class="panel narrow" style="margin: 0 auto;">
+        <div class="alert error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+        <form th:action="${productDTO.id != null ? '/products/edit/' + productDTO.id : '/products/create'}"
+              th:object="${productDTO}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-grid">
+                <label for="name">Tên sản phẩm *</label>
+                <div>
+                    <input type="text" id="name" th:field="*{name}" placeholder="Nhập tên sản phẩm...">
+                    <span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+
+                <label for="price">Giá bán (VNĐ) *</label>
+                <div>
+                    <input type="number" id="price" th:field="*{price}" step="1000" min="0" placeholder="VD: 150000">
+                    <span class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+                </div>
+
+                <label for="quantity">Số lượng kho *</label>
+                <div>
+                    <input type="number" id="quantity" th:field="*{quantity}" min="0" placeholder="VD: 50">
+                    <span class="field-error" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></span>
+                </div>
+
+                <label for="description">Mô tả sản phẩm</label>
+                <div>
+                    <textarea id="description" th:field="*{description}" placeholder="Mô tả chi tiết sản phẩm..."></textarea>
+                    <span class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+                </div>
+
+                <!-- ẢNH ĐÃ CÓ (KHI EDIT) -->
+                <label th:if="${productDTO.images != null and !productDTO.images.isEmpty()}">Ảnh hiện tại</label>
+                <div th:if="${productDTO.images != null and !productDTO.images.isEmpty()}" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <div th:each="img : ${productDTO.images}" style="position: relative; display: inline-block;">
+                        <img th:src="${img.imageUrl}" class="thumb" style="width: 80px; height: 80px;"
+                             onerror="this.src='/images/default-image.png'">
+                        <!-- Nút xóa ảnh -->
+                        <button type="submit"
+                                th:formaction="@{/products/delete-image/{imgId}(imgId=${img.id}, productId=${productDTO.id})}"
+                                class="btn danger small"
+                                style="position: absolute; top: -5px; right: -5px; padding: 2px 6px; font-size: 10px; border-radius: 50%;"
+                                onclick="return confirm('Bạn có muốn xóa ảnh này?');">X</button>
+                    </div>
+                </div>
+
+                <label for="imageFiles">Tải ảnh lên (Cloudinary)</label>
+                <div>
+                    <input type="file" id="imageFiles" name="imageFiles" multiple accept="image/*">
+                    <span class="hint" style="color: #64748b; font-size: 12px;">Có thể chọn 1 hoặc nhiều ảnh để upload trực tiếp lên Cloudinary.</span>
+                </div>
+
+                <div></div>
+                <div style="margin-top: 14px;">
+                    <button type="submit" class="btn primary" th:text="${productDTO.id != null ? 'Cập nhật sản phẩm' : 'Lưu sản phẩm'}">Lưu</button>
+                    <a th:href="@{/products}" class="btn secondary" style="margin-left: 8px;">Hủy bỏ</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
