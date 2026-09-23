@@ -10,22 +10,29 @@
     <nav>
         <a th:href="@{/}">Trang chủ</a>
         <a th:href="@{/products}">Sản phẩm</a>
-        <a th:href="@{/dashboard}" sec:authorize="hasRole('ADMIN')">Dashboard</a>
-        <a th:href="@{/users}" sec:authorize="hasRole('ADMIN')">Quản lý User</a>
+        <a th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">Dashboard</a>
+        <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Quản lý User</a>
     </nav>
 
     <!-- KHI ĐÃ ĐĂNG NHẬP -->
-    <div class="account" sec:authorize="isAuthenticated()">
-        <!-- Avatar -->
-        <img th:src="${#authentication.principal.images != null and !#strings.isEmpty(#authentication.principal.images) ? #authentication.principal.images : '/images/avatar-default.png'}"
+    <div class="account" sec:authorize="isAuthenticated()"
+         th:with="u=${#authentication.principal instanceof T(vn.iotstar.security.CustomUserDetails) ? #authentication.principal : null}">
+        <!-- Avatar / images -->
+        <img th:src="${u != null and u.images != null and !#strings.isEmpty(u.images) ? u.images : '/images/avatar-default.png'}"
              alt="Avatar"
              class="user-avatar"
              onerror="this.src='/images/avatar-default.png'">
 
-        <!-- Thông tin User -->
+        <!-- Thông tin User: Fullname, Username, Email, Role -->
         <div class="user-info">
-            <span class="user-name" th:text="${#authentication.principal.fullName != null ? #authentication.principal.fullName : #authentication.principal.username}">User</span>
-            <span class="user-role" th:text="${#authentication.principal.role}">USER</span>
+            <div class="user-info-row-top">
+                <span class="user-fullname" th:text="${u != null and u.fullName != null and !#strings.isEmpty(u.fullName) ? u.fullName : #authentication.name}">Họ và tên</span>
+                <span class="user-username" th:text="'(@' + ${u != null ? u.username : #authentication.name} + ')'">(@username)</span>
+                <span class="user-role-badge" th:text="${u != null and u.role != null ? u.role : #strings.listJoin(#authentication.authorities.![authority], ', ')}">ROLE_USER</span>
+            </div>
+            <div class="user-info-row-bottom">
+                <span class="user-email" th:text="${u != null and u.email != null ? u.email : ''}">email@example.com</span>
+            </div>
         </div>
 
         <!-- Logout Button -->
@@ -38,7 +45,6 @@
     <!-- KHI CHƯA ĐĂNG NHẬP -->
     <div class="account" sec:authorize="!isAuthenticated()">
         <a th:href="@{/login}" class="btn primary small" style="color: #fff; text-decoration: none;">Đăng nhập</a>
-        <a th:href="@{/register}" class="btn secondary small" style="text-decoration: none;">Đăng ký</a>
     </div>
 </header>
 </body>

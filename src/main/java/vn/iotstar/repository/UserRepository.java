@@ -19,11 +19,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsernameIgnoreCase(String username);
 
-    @Query("SELECT u FROM User u WHERE LOWER(u.username) = LOWER(:login) OR LOWER(u.email) = LOWER(:login)")
-    Optional<User> findByUsernameOrEmail(@Param("login") String login);
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) = LOWER(:username) OR LOWER(u.email) = LOWER(:email)")
+    Optional<User> findByUsernameOrEmail(@Param("username") String username, @Param("email") String email);
 
-    default Optional<User> findByUsernameOrEmail(String username, String email) {
-        return findByUsernameOrEmail(username != null ? username : email);
+    default Optional<User> findByUsernameOrEmail(String login) {
+        return findByUsernameOrEmail(login, login);
     }
 
     boolean existsByEmailIgnoreCase(String email);

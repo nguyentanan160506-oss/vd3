@@ -17,7 +17,7 @@ public class DashboardController {
     private final UserService userService;
     private final ProductService productService;
 
-    @GetMapping("/dashboard")
+    @GetMapping({"/dashboard", "/admin", "/admin/dashboard"})
     @PreAuthorize("hasRole('ADMIN')")
     public String dashboard(Model model) {
         long totalUsers = userService.countUsers();

@@ -66,18 +66,47 @@ body {
     display: flex;
     flex-direction: column;
     font-size: 13px;
-    line-height: 1.2;
+    line-height: 1.3;
+    gap: 2px;
 }
 
-.user-name {
+.user-info-row-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-fullname {
     font-weight: 700;
     color: #fff;
+    font-size: 13px;
 }
 
-.user-role {
-    font-size: 11px;
+.user-username {
     color: #93c5fd;
+    font-size: 12px;
+}
+
+.user-info-row-bottom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-email {
+    font-size: 11px;
+    color: #cbd5e1;
+}
+
+.user-role-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #1e3a8a;
+    background: #bfdbfe;
+    padding: 1px 6px;
+    border-radius: 4px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .link-button {
